@@ -1,7 +1,12 @@
 
 namespace {
     template<typename T>
-    void construct(const T* p, const T& rhs) {
+    void construct(T* p, T&& rhs) {
+        new (p) T{std::move(rhs)};
+    }
+
+    template<typename T>
+    void construct(T* p, const T& rhs) {
         new (p) T{rhs};
     }
 
