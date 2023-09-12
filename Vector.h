@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <exception>
+#include <stdexcept>
 
 template<typename T>
 class Vector : private VectorBuf<T> {
@@ -88,6 +90,28 @@ public:
     size_t size() const noexcept { return used_; }
 
     bool empty() const noexcept { return !used_; }
+
+    T& operator[](size_t pos) { return *buf_[pos]; }
+
+    const T& operator[](size_t pos) const { return *buf_[pos]; }
+
+    T& front() { return operator[](0); }
+
+    const T& front() const { return operator[](0); }
+
+    T& back() { return operator[](used_ - 1); }
+
+    const T& back() const { return operator[](used_ - 1); }
+
+    T& at(size_t pos) {
+        if (pos >= used_ || pos < 0) throw std::out_of_range("out_of_range");
+        return operator[](pos); 
+    }
+
+    const T& at(size_t pos) const {
+        if (pos >= used_ || pos < 0) throw std::out_of_range("out_of_range");
+        return operator[](pos);
+    }
 
 private:
     Vector(size_t sz, bool) : VectorBuf<T>(sz) {}
