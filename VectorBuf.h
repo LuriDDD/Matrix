@@ -11,6 +11,11 @@ namespace {
     }
 
     template<typename T>
+    void construct(T* p) {
+        new (p) T{};
+    }
+
+    template<typename T>
     void destroy(T* p) noexcept {
         p->~T();
     }
