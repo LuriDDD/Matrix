@@ -113,6 +113,59 @@ public:
         return operator[](pos);
     }
 
+    class Iterator {
+    public:
+        using iterator_type = Iterator;
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
+        using reference = value_type&;
+        using pointer = value_type*;
+        using iterator_category = std::random_access_iterator_tag;
+        using iterator_concept = std::contiguous_iterator_tag;
+    private:
+        pointer value_;
+    public:
+        Iterator() noexcept : value_{pointer()} {}
+
+        Iterator(pointer value) noexcept : value_{value} {}
+
+        Iterator(const Iterator& rhs) noexcept : value_{rhs.value_} {}
+        Iterator& operator=(const Iterator& rhs) noexcept { value_= rhs.value_; return *this; }
+
+        Iterator(Iterator&& rhs) noexcept : value_{rhs.value_} { rhs.value_ = nullptr; }
+        Iterator& operator=(Iterator&& rhs) { value_ = rhs.value_; rhs.value_ = nullptr; return *this; }
+
+        reference operator*() noexcept { return *value_; }
+
+        pointer operator->() noexcept { return value_; }
+
+        Iterator& operator++() noexcept { ++value_; return *this; }
+
+        Iterator& operator--() noexcept { --value_; return *this; }
+
+        Iterator operator++(int) noexcept { return Iterator(value_++); }
+
+        Iterator operator--(int) noexcept { return Iterator(value_--); }
+
+        reference& operator[](int pos) noexcept { return value_[pos]; }
+
+        Iterator& operator+=(int pos) noexcept { value_ += pos; return *this; }
+
+        Iterator& operator-=(int pos) noexcept { value_ -= pos; return *this; }
+
+        Iterator operator+(int pos) const noexcept { return Iterator(value_ + pos); }
+
+        Iterator operator-(int pos) const noexcept { return Iterator(value_ - pos); }
+
+        difference_type operator-(const Iterator& rhs) const noexcept { return value_ - rhs.value_; }
+
+        auto operator<=>(const Iterator&) const = default;
+    };
+
+    Iterator begin() const { return Iterator(buf_); }
+
+    Iterator end() const { return Iterator(buf_ + used_); }
+
 private:
     Vector(size_t sz, bool) : VectorBuf<T>(sz) {}
 };

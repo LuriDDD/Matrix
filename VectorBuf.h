@@ -44,15 +44,15 @@ protected:
     VectorBuf(VectorBuf&& rhs) noexcept : buf_{rhs.buf_}, sz_{rhs.sz_}, used_{rhs.used_} {
         rhs.buf_ = nullptr;
         rhs.sz_ = rhs.used_ = 0;
-    };
+    }
     VectorBuf& operator=(VectorBuf&& rhs) noexcept {
         std::swap(buf_, rhs.buf_);
         std::swap(sz_, rhs.sz_);
         std::swap(used_, rhs.used_);
         return *this;
-    };
+    }
     ~VectorBuf() {
         destroy(buf_, buf_ + used_);
         ::operator delete(buf_);
-    };
+    }
 };
