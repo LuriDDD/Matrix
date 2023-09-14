@@ -27,9 +27,9 @@ struct X {
     X& operator=(X&&) { std::cout << "=X(&&)" << std::endl; return *this;}
     ~X() { std::cout << "~X()" << std::endl; }
 };
- 
-int main()
-{   constexpr size_t sz = 1000000;
+
+int main() {
+    const size_t sz = 1'000'000;
     std::random_device rnd_device;
     std::mt19937 mersenne_engine {rnd_device()};
     std::uniform_int_distribution<int> dist {1, 100};
@@ -43,9 +43,8 @@ int main()
         Vector<Y> c(std::move(b));
         Vector<Y> v;
         for (int i = 0; i < sz; ++i) v.push_back(Y{});
-        std::cout << v.size() << " - " << v.capacity() << std::endl;
         std::iota(v.begin(), v.end(), 0);
-        //std::generate(v.begin(), v.end(), gen);
+        std::generate(v.begin(), v.end(), gen);
         std::shuffle(v.begin(), v.end(), mersenne_engine);
         std::sort(v.begin(), v.end());
     }
@@ -60,9 +59,8 @@ int main()
         std::vector<Y> c(std::move(b));
         std::vector<Y> v;
         for (int i = 0; i < sz; ++i) v.push_back(Y{});
-        std::cout << v.size() << " - " << v.capacity() << std::endl;
         std::iota(v.begin(), v.end(), 0);
-        //std::generate(v.begin(), v.end(), gen);
+        std::generate(v.begin(), v.end(), gen);
         std::shuffle(v.begin(), v.end(), mersenne_engine);
         std::sort(v.begin(), v.end());
     }

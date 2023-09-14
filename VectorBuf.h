@@ -2,7 +2,7 @@
 namespace {
     template<typename T>
     void construct(T* p, T&& rhs) {
-        new (p) T{std::move(rhs)};
+        new (p) T{std::forward<T>(rhs)};
     }
 
     template<typename T>

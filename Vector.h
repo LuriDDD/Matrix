@@ -91,25 +91,25 @@ public:
 
     bool empty() const noexcept { return !used_; }
 
-    T& operator[](size_t pos) { return *buf_[pos]; }
+    T& operator[](size_t pos) noexcept { return *buf_[pos]; }
 
-    const T& operator[](size_t pos) const { return *buf_[pos]; }
+    const T& operator[](size_t pos) const noexcept { return *buf_[pos]; }
 
-    T& front() { return operator[](0); }
+    T& front() noexcept { return *begin(); }
 
-    const T& front() const { return operator[](0); }
+    const T& front() const noexcept { return *begin(); }
 
-    T& back() { return operator[](used_ - 1); }
+    T& back() noexcept { return *(end() - 1); }
 
-    const T& back() const { return operator[](used_ - 1); }
+    const T& back() const noexcept { return *(end() - 1); }
 
     T& at(size_t pos) {
-        if (pos >= used_ || pos < 0) throw std::out_of_range("out_of_range");
+        if (pos >= used_) throw std::out_of_range("out_of_range");
         return operator[](pos); 
     }
 
     const T& at(size_t pos) const {
-        if (pos >= used_ || pos < 0) throw std::out_of_range("out_of_range");
+        if (pos >= used_) throw std::out_of_range("out_of_range");
         return operator[](pos);
     }
 
@@ -129,15 +129,9 @@ public:
 
         Iterator(pointer value) noexcept : value_{value} {}
 
-        Iterator(const Iterator& rhs) noexcept : value_{rhs.value_} {}
-        Iterator& operator=(const Iterator& rhs) noexcept { value_= rhs.value_; return *this; }
+        reference operator*() const noexcept { return *value_; }
 
-        Iterator(Iterator&& rhs) noexcept : value_{rhs.value_} { rhs.value_ = nullptr; }
-        Iterator& operator=(Iterator&& rhs) { value_ = rhs.value_; rhs.value_ = nullptr; return *this; }
-
-        reference operator*() noexcept { return *value_; }
-
-        pointer operator->() noexcept { return value_; }
+        pointer operator->() const noexcept { return value_; }
 
         Iterator& operator++() noexcept { ++value_; return *this; }
 
@@ -147,24 +141,24 @@ public:
 
         Iterator operator--(int) noexcept { return Iterator(value_--); }
 
-        reference& operator[](int pos) noexcept { return value_[pos]; }
+        reference& operator[](difference_type pos) noexcept { return value_[pos]; }
 
-        Iterator& operator+=(int pos) noexcept { value_ += pos; return *this; }
+        Iterator& operator+=(difference_type pos) noexcept { value_ += pos; return *this; }
 
-        Iterator& operator-=(int pos) noexcept { value_ -= pos; return *this; }
+        Iterator& operator-=(difference_type pos) noexcept { value_ -= pos; return *this; }
 
-        Iterator operator+(int pos) const noexcept { return Iterator(value_ + pos); }
+        Iterator operator+(difference_type pos) const noexcept { return Iterator(value_ + pos); }
 
-        Iterator operator-(int pos) const noexcept { return Iterator(value_ - pos); }
+        Iterator operator-(difference_type pos) const noexcept { return Iterator(value_ - pos); }
 
-        difference_type operator-(const Iterator& rhs) const noexcept { return value_ - rhs.value_; }
+        difference_type operator-(const Iterator& rhs) const noexcept { return std::distance(rhs.value_, value_); }
 
-        auto operator<=>(const Iterator&) const = default;
+        auto operator<=>(const Iterator&) const noexcept = default;
     };
 
-    Iterator begin() const { return Iterator(buf_); }
+    Iterator begin() const noexcept { return Iterator(buf_); }
 
-    Iterator end() const { return Iterator(buf_ + used_); }
+    Iterator end() const noexcept { return Iterator(buf_ + used_); }
 
 private:
     Vector(size_t sz, bool) : VectorBuf<T>(sz) {}
