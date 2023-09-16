@@ -10,11 +10,11 @@
 
 struct Y {
     int value;
-    Y(int a = 0) : value{a} {}
-    Y(const Y& rhs) : value{rhs.value} {}
+    Y(int a = 0) : value{a} { }
+    Y(const Y& rhs) : value{rhs.value} { }
     Y& operator=(const Y& rhs) { value = rhs.value; return *this;}
-    Y(Y&& rhs) : value{rhs.value} { rhs.value = 0; }
-    Y& operator=(Y&& rhs) { value = rhs.value; rhs.value = 0; return *this;}
+    Y(Y&& rhs) noexcept : value{rhs.value} { rhs.value = 0; }
+    Y& operator=(Y&& rhs) noexcept { value = rhs.value; rhs.value = 0; return *this;}
     auto operator<=>(const Y&) const = default;
     ~Y() {}
 };
@@ -28,8 +28,9 @@ struct X {
     ~X() { std::cout << "~X()" << std::endl; }
 };
 
+
 int main() {
-    const size_t sz = 1'000'000;
+    const size_t sz = 100000;
     std::random_device rnd_device;
     std::mt19937 mersenne_engine {rnd_device()};
     std::uniform_int_distribution<int> dist {1, 100};

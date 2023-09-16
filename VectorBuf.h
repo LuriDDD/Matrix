@@ -1,4 +1,3 @@
-
 namespace {
     template<typename T>
     void construct(T* p, T&& rhs) {

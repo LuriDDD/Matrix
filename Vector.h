@@ -38,7 +38,7 @@ public:
         if (used_ == sz_) {
             Vector<T> tmp = copy_and_swap(sz_ * 2);
             tmp.push_back();
-            *this = std::move(tmp);
+            std::swap(*this, tmp);
             return;
         }
         construct(buf_ + used_);
@@ -49,7 +49,7 @@ public:
         if (used_ == sz_) {
             Vector<T> tmp = copy_and_swap(sz_ * 2);
             tmp.push_back(value);
-            *this = std::move(tmp);
+            std::swap(*this, tmp);
             return;
         }
         construct(buf_ + used_, value);
@@ -60,7 +60,7 @@ public:
         if (used_ == sz_) {
             Vector<T> tmp = copy_and_swap(sz_ * 2);
             tmp.push_back(std::move(value));
-            *this = std::move(tmp);
+            std::swap(*this, tmp);
             return;
         }
         construct(buf_ + used_, std::move(value));
@@ -69,14 +69,14 @@ public:
 
     Vector<T> copy_and_swap(size_t sz) {
         Vector<T> tmp(((sz) ? sz : 2), true);
-        std::for_each(tmp.buf_, tmp.buf_ + used_, [&] (T& a) { construct(std::addressof(a), buf_[tmp.used_]); ++tmp.used_;});
+        std::for_each(tmp.buf_, tmp.buf_ + used_, [&] (T& a) { construct(std::addressof(a), std::move(buf_[tmp.used_])); ++tmp.used_;});
         return tmp;
     }
 
     void reserve(size_t sz) {
         if (sz > sz_) {
             Vector<T> tmp = copy_and_swap(sz);
-            *this = std::move(tmp);
+            std::swap(*this, tmp);
         }
     }
 
