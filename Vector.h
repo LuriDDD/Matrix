@@ -17,6 +17,12 @@ public:
 
     ~Vector() = default;
 
+    template<typename Iter>
+    Vector(Iter first, Iter last) : VectorBuf<T>(std::distance(first, last)) {
+        std::for_each(first, last, [&] (const T& value)  { push_back(value); });
+    }
+
+
     Vector(size_t sz = 0) : VectorBuf<T>(sz) {
         while(used_ != sz_) {
             push_back();
@@ -91,9 +97,9 @@ public:
 
     bool empty() const noexcept { return !used_; }
 
-    T& operator[](size_t pos) noexcept { return *buf_[pos]; }
+    T& operator[](size_t pos) noexcept { return buf_[pos]; }
 
-    const T& operator[](size_t pos) const noexcept { return *buf_[pos]; }
+    const T& operator[](size_t pos) const noexcept { return buf_[pos]; }
 
     T& front() noexcept { return *begin(); }
 
@@ -163,3 +169,6 @@ public:
 private:
     Vector(size_t sz, bool) : VectorBuf<T>(sz) {}
 };
+
+template<typename Iter> 
+    Vector(Iter first, Iter last) -> Vector<typename std::iterator_traits<Iter>::value_type>;

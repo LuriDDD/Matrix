@@ -4,6 +4,7 @@
 #include <string>
 #include <chrono>
 #include <random>
+#include <list>
 
 #include "Vector.h"
 
@@ -29,7 +30,7 @@ struct X {
 };
 
 
-int main() {
+auto main() -> decltype(1) {
     const size_t sz = 100000;
     std::random_device rnd_device;
     std::mt19937 mersenne_engine {rnd_device()};
@@ -41,13 +42,19 @@ int main() {
     {
         Vector<Y> a (sz);
         Vector<Y> b  = a;
-        Vector<Y> c(std::move(b));
-        Vector<Y> v;
-        for (int i = 0; i < sz; ++i) v.push_back(Y{});
-        std::iota(v.begin(), v.end(), 0);
-        std::generate(v.begin(), v.end(), gen);
-        std::shuffle(v.begin(), v.end(), mersenne_engine);
-        std::sort(v.begin(), v.end());
+        std::list<Y> l = {0, 1, 2 ,3 ,4 ,5};
+        Vector c(l.begin(), l.end());
+        std::cout << c.size() << std::endl;
+        c[3] = 1;
+        auto p = std::mismatch(c.begin(), c.end(), l.begin());
+        if (p.first != c.end()) std::cout << p.first->value << std::endl;
+
+        // Vector<Y> v;
+        // for (int i = 0; i < sz; ++i) v.push_back(Y{});
+        // std::iota(v.begin(), v.end(), 0);
+        // std::generate(v.begin(), v.end(), gen);
+        // std::shuffle(v.begin(), v.end(), mersenne_engine);
+        // std::sort(v.begin(), v.end());
     }
     auto end_time = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
@@ -55,15 +62,15 @@ int main() {
 
     start_time = std::chrono::high_resolution_clock::now();
     {
-        std::vector<Y> a (sz);
-        std::vector<Y> b  = a;
-        std::vector<Y> c(std::move(b));
-        std::vector<Y> v;
-        for (int i = 0; i < sz; ++i) v.push_back(Y{});
-        std::iota(v.begin(), v.end(), 0);
-        std::generate(v.begin(), v.end(), gen);
-        std::shuffle(v.begin(), v.end(), mersenne_engine);
-        std::sort(v.begin(), v.end());
+        std::vector<int> a (sz, 2);
+        std::vector<int> b  = a;
+        std::vector<int> c(b.begin(), b.end());
+        // std::vector<Y> v;
+        // for (int i = 0; i < sz; ++i) v.push_back(Y{});
+        // std::iota(v.begin(), v.end(), 0);
+        // std::generate(v.begin(), v.end(), gen);
+        // std::shuffle(v.begin(), v.end(), mersenne_engine);
+        // std::sort(v.begin(), v.end());
     }
     end_time = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
